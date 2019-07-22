@@ -3,3 +3,5 @@ test/*
 __pycache__/*
 **/.avi
 *.avi
+
+\.vscode/
