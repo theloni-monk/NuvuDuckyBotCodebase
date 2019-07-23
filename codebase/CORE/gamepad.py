@@ -56,7 +56,7 @@ def gamepadProcess(pipelineFunc, gamepadq, motorq, cmdq):
             keyevent = categorize(event)
             if keyevent.keystate == KeyEvent.key_down:
                 print(keyevent.keycode)
-                if 'BTN_STR' in keyevent.keycode:
+                if 'BTN_START' in keyevent.keycode:
                     if coreRunning:
                         print("DISABLING AUTONOMOUS CONTROL")
                         # Turn the camera OFF

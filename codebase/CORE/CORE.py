@@ -5,7 +5,7 @@ import numpy as np
 # Import library that allows parallel processing
 from multiprocessing import Process, Queue
 # Import library for streaming video
-from rpistream import streamserver
+from rpistreaml import streamserver
 # Import the pipeline code
 import sys
 # Import the debug constant
@@ -29,7 +29,8 @@ def retrieveImage(pipeline, cam, motorq):
 def coreProcess(pipelineFunc, motorq, cmdq):
     #THIS CODE SETS UP CAMERA THEN BEGINS VIDEOSTREAMING SERVER:
     
-    server = streamserver.Server(port=5000, verbose = VERBOSE)
+    server = streamserver.Server(port=5000, promoteErrors = True, verbose = VERBOSE)
+    server.s.settimeout(5)
     disconnected = True
 
     cam = cv2.VideoCapture(0) #TODO: use rpistream camera
@@ -49,16 +50,24 @@ def coreProcess(pipelineFunc, motorq, cmdq):
             pass
         elif msg == 'exit':
             return
-        if not parameters.BYPASS_STREAMING:
-            try:
-                if disconnected:
-                    server.serveNoBlock() #blocking
-                disconnected = False
+
+        if not BYPASS_STREAMING:
+            if disconnected:
+                try:
+                    server.serve() #blocking serve for 5s
+                    print "serving successful"
+                    initImg = retrieveImage(pipelineFunc, cam, motorq)
+                    print "initImg retrieved"
+                    server.initializeStream(initImg)
+                    print "stream initialized"
+                    disconnected = False
+                except socket.error as exc:
+                    print(exc)
+                    disconnected = True
+            else:
                 server.sendFrame(server.fetchFrame(
-                    retrieveImage, [pipelineFunc, cam, motorq]))
-            except socket.error as exc:
-                print(exc)
-                disconnected = True
+                        retrieveImage, [pipelineFunc, cam, motorq]))
+            
         else:
             retrieveImage(pipelineFunc, cam, motorq) # runs pipline
 

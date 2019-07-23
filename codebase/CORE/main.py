@@ -11,21 +11,6 @@ import time
 import CORE
 import parameters
 
-# Ensure the motorProcess joins and the motors turn off.
-
-def exitFunction():
-    # Send a sign to the gamepadProcess to end
-    gamepadq.put("exit")
-    # Wait for the gamepadProcess to end
-    gamepadp.join()
-    # Send a sign to the motorProcess to end
-    motorq.put("exit")
-    # Wait for the motor process to end
-    motorp.join()
-    # Kill all the motors
-    motor.turnOffMotors()
-    # Close any openCV windows
-    #cv2.destroyAllWindows()
 
 ##########################################
 # MAIN CODE
@@ -61,7 +46,31 @@ def start(pipelineFunc):
     atexit.register(exitFunction)
 
     # Prevent this main process from terminating until ESCAPE is pressed
-    while True:
-        time.sleep(1)
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
     # call the exit function
-    exitFunction()
+    exitFunction(gamepadq, gamepadp, motorq, motorp, cmdq, corep)
+
+def exitFunction(gq, gp, mq, mp, cmdq, cp):
+    # Send a sign to the gamepadProcess to end
+    gq.put("exit")
+    # Wait for the gamepadProcess to end
+    gp.join()
+    print "gamepad process exit"
+    # Send a sign to the motorProcess to end
+    mq.put("exit")
+    # Wait for the motor process to end
+    mp.join()
+    print "motor process exit"
+    # Kill all the motors
+    motor.turnOffMotors()
+    # send command to kill core process
+    cmdq.put("exit")
+    # wait for process to end
+    cp.join()
+    print "core process exit"
+    # Close any openCV windows
+    #cv2.destroyAllWindows()
