@@ -3,6 +3,7 @@
 # 2. Ensure the pipeline function takes BOTH the image and motorq as inputs and outputs to the motorq.
 
 import numpy as np
+import cv2
 from multiprocessing import Queue
 def pipeline(image, motorq):
     imageOut = image
