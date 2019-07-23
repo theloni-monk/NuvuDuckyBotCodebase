@@ -9,7 +9,7 @@ from rpistream import streamserver
 # Import the pipeline code
 import sys
 # Import the debug constant
-from parameters import CAM_WIDTH, CAM_HEIGHT
+from parameters import *
 import socket
 
 
