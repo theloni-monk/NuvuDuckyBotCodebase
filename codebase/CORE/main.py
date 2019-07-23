@@ -32,7 +32,7 @@ def exitFunction():
 ##########################################
 
 
-if __name__ == '__main__':
+def start(pipelineFunc):
     # Create a queue to communicate to the motor process.
     motorq = Queue()
     # Create a Process that runs the motors, give it the queue.
@@ -48,13 +48,12 @@ if __name__ == '__main__':
         gamepadq = Queue()
         # Create a Process for the gamepad, and give it the gamepad queue.
         gamepadp = Process(target=gamepad.gamepadProcess,
-                        args=(gamepadq, motorq, cmdq))
+                        args=(pipelineFunc, gamepadq, motorq, cmdq))
         # Start the gamepadProcess
         gamepadp.start()
     else:
-        coreRunning = True
         # Create a Process for the camera, and give it the video queue.
-        corep = Process(target = CORE.coreProcess, args=(motorq, cmdq))
+        corep = Process(target = CORE.coreProcess, args=(pipelineFunc, motorq, cmdq))
         # Start the videoProcess
         corep.start()
 

@@ -30,7 +30,7 @@ def clearQueue(q):
 # Process the GamePad
 
 
-def gamepadProcess(gamepadq, motorq, cmdq):
+def gamepadProcess(pipelineFunc, gamepadq, motorq, cmdq):
     # Create variables to keep track of the joystick state.
     joyLR = 0
     joyUD = 0
@@ -74,7 +74,7 @@ def gamepadProcess(gamepadq, motorq, cmdq):
                         coreRunning = True
                         # Create a Process for the camera, and give it the video queue.
                         corep = Process(
-                            target= CORE.coreProcess, args=(motorq, cmdq))
+                            target= CORE.coreProcess, args=(pipelineFunc, motorq, cmdq))
                         # Start the videoProcess
                         corep.start()
 
