@@ -29,7 +29,7 @@ def retrieveImage(pipeline, cam, motorq):
 def coreProcess(pipelineFunc, motorq, cmdq):
     #THIS CODE SETS UP CAMERA THEN BEGINS VIDEOSTREAMING SERVER:
     
-    server = streamserver.Server(port=5000, verbose=parameters.VERBOSE)
+    server = streamserver.Server(port=5000, verbose = VERBOSE)
     disconnected = True
 
     cam = cv2.VideoCapture(0) #TODO: use rpistream camera
