@@ -14,7 +14,7 @@ class Client:
     def __init__(self, **kwargs):
         #self.os=platform.system()
         self.verbose = kwargs.get("verbose", False)
-        self.promoteErrors=kwargs.get("raiseErrors", False)
+        self.promoteErrors=kwargs.get("promoteErrors", False)
         # output file seems to be corrupted: likely due to output file stream not being closed correctly
         self.Write = kwargs.get("WriteFile", False)
         self.writepath = kwargs.get("path", "")
@@ -148,7 +148,7 @@ class Client:
         self.s.close()
         if(E!=None):
             if self.promoteErrors:
-                self.log("Stream encountered error")
+                self.log("Stream raised error: " + str(E))
                 raise E
             else:
                 print("Stream closed on Error\n" + str(E))
