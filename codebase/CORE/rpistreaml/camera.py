@@ -6,21 +6,22 @@ from multiprocessing import Process, Pipe
 class Camera:
     def __init__(self, **kwargs):
         self.mirror = kwargs.get("mirror", False)
-        self.deviceId=kwargs.get("device", 0)
-        self.cam = cv2.VideoCapture(self.deviceId) #captures from the first webcam it sees by default
-        
-        self.trueRes=(self.cam.get(cv2.CV_CAP_PROP_FRAME_WIDTH),self.cam.get(cv2.CV_VAP_PROP_FRAME_HEIGHT))
-        self.scale=(1,1)
-        self.outRes=(self.trueRes[0]*self.scale[0],self.trueRes[1]*self.scale[1])
+        self.deviceId = kwargs.get("device", 0)
+        # captures from the first webcam it sees by default
+        self.cam = cv2.VideoCapture(self.deviceId)
+
+        self.trueRes = (int(self.cam.get(cv2.CAP_PROP_FRAME_WIDTH)), int(self.cam.get(
+            cv2.CAP_PROP_FRAME_HEIGHT)))  # 3, 4 = CAP_PROP_WIDTH, HEIGHT
+        self.sRes = self.trueRes
 
         self.output = None
 
-    def setRes(self,res):
-        """Actually just adjust internal scale value"""
-        self.scale=(res[0]/self.trueRes[0],res[1]/self.trueRes[1])
+    def setRes(self, res):
+        """Adjust internal resize resolution"""
+        self.sRes = (int(res[0]),int(res[1]))
 
     def getFps(self):
-        return self.cam.get(cv2.CV_CAP_PROP_FPS)
+        return self.cam.get(cv2.CAP_PROP_FPS)  # 5 = CAP_PROP_FPS
 
     @property
     def image(self):
@@ -29,10 +30,12 @@ class Camera:
             raise Exception("Unable to retrieve image from camera")
         if self.mirror:
             img = cv2.flip(img, 1)
-        self.output = cv2.resize(img,(0,0),self.scale[0],self.scale[1])
+        self.output = cv2.resize(img, self.sRes)
 
         return self.output
 
+
 if __name__ == "__main__":
     cam = Camera(mirror=True)
-    cv2.imwrite("test/test_image.png", cam.image)
+    print cam.trueRes
+    cv2.imwrite("test_image.png", cam.image)

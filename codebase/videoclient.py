@@ -11,7 +11,6 @@ try:
         client.startStream()
     except Exception as e:
         print e 
-
 except KeyboardInterrupt as e:
     print "exiting"
     cv2.destroyAllWindows()
