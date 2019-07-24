@@ -1,10 +1,10 @@
 from CORE.rpistreaml.streamclient import Client
 import cv2
 
-VERBOSE = True
-SERVER_IP = "18.21.190.157"
+SERVER_IP = "localhost"
 SERVER_PORT = 5000
-client = Client(serverIp="18.21.190.157", port = 5000, promoteErrors = True) # Connects to the server
+#NOTE: if you change the resolution in the server, you have to change it in the client
+client = Client(serverIp=SERVER_IP, port = SERVER_PORT, promoteErrors = True, writeFile = True) # Connects to the server
 client.initializeStream()
 try:
     try:

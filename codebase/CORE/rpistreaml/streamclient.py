@@ -6,6 +6,7 @@ import zstandard
 import atexit
 from netutils import *
 import sys
+import platform
 
 
 
@@ -16,23 +17,27 @@ class Client:
         self.verbose = kwargs.get("verbose", False)
         self.promoteErrors=kwargs.get("promoteErrors", False)
         # output file seems to be corrupted: likely due to output file stream not being closed correctly
-        self.Write = kwargs.get("WriteFile", False)
-        self.writepath = kwargs.get("path", "")
+        self.Write = kwargs.get("writeFile", False)
+        if platform.system() == 'Windows':
+            self.writepath = kwargs.get("path", ".\\")
+        else:
+            self.writepath = kwargs.get("path", "./")
         self.FileFPS = kwargs.get("fileoutFps", 10)
         self.FileName = kwargs.get("fileName", 'outpy')
-        self.iRes = kwargs.get("imageResolution", (640, 480))
+        self.iRes = kwargs.get("imageResolution", (320, 240))
         fourcc = None
         self.out = None
         if self.Write:
             try:
                 fourcc = cv2.cv.CV_FOURCC(*'MJPG') # OpenCV 2 function
             except:
-                fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')  # OpenCV 3 function
+                #fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')  # OpenCV 3 function
+                fourcc = cv2.VideoWriter_fourcc(*'MJPG')
             
             self.out = cv2.VideoWriter(
                 self.writepath+self.FileName+'.avi', fourcc, self.FileFPS, self.iRes)
         
-        self.windowRes = (640, 480)
+        #self.windowRes = (640, 480)
         self.windowTitle=kwargs.get("Title","Feed")
         self.prevFrame = 0
 
@@ -136,7 +141,7 @@ class Client:
             img=cv2.resize(img, (0, 0), fx=self.viewScale, fy=self.viewScale)
             #dynamically scale image size to window size
             cv2.imshow(self.windowTitle, img) #cv2.resize(img, (0, 0), fx=self.windowRes[0]/img.shape[0], fy=self.windowRes[1]/img.shape[1]))
-            
+
             if cv2.waitKey(1) == 27:
                 self.close()
                 break  # esc to quit
