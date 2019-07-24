@@ -2,11 +2,13 @@
 import motor
 import gamepad
 # Import library that allows parallel processing
+import multiprocessing
 from multiprocessing import Process, Queue
 # Import library that ensures an exist function is called when Python stops.
 import atexit
 # Import OpenCV
 import cv2
+import sys
 import time
 import CORE
 import parameters
@@ -36,14 +38,17 @@ def start(pipelineFunc):
                         args=(pipelineFunc, gamepadq, motorq, cmdq))
         # Start the gamepadProcess
         gamepadp.start()
+        # Register the exitFunction() to be called when this Python script ends.
+        atexit.register(exitFunction,[gamepadq, gamepadp, motorq, motorp])
     else:
         # Create a Process for the camera, and give it the video queue.
         corep = Process(target = CORE.coreProcess, args=(pipelineFunc, motorq, cmdq))
         # Start the videoProcess
         corep.start()
+        # Register the exitFunction() to be called when this Python script ends.
+        atexit.register(exitFunction,[motorq, motorp, None, None, cmdq, corep])
 
-    # Register the exitFunction() to be called when this Python script ends.
-    atexit.register(exitFunction)
+    
 
     # Prevent this main process from terminating until ESCAPE is pressed
     try:
@@ -52,25 +57,34 @@ def start(pipelineFunc):
     except KeyboardInterrupt:
         pass
     # call the exit function
-    exitFunction(gamepadq, gamepadp, motorq, motorp, cmdq, corep)
+    # TODO: exit func
+    
+    sys.exit(0) # should call correct exit func
 
-def exitFunction(gq, gp, mq, mp, cmdq, cp):
-    # Send a sign to the gamepadProcess to end
-    gq.put("exit")
-    # Wait for the gamepadProcess to end
-    gp.join()
-    print "gamepad process exit"
-    # Send a sign to the motorProcess to end
+def exitFunction(mq, mp, gq = None, gp = None, cmdq=None, cp=None):
+    
     mq.put("exit")
     # Wait for the motor process to end
     mp.join()
     print "motor process exit"
     # Kill all the motors
     motor.turnOffMotors()
-    # send command to kill core process
-    cmdq.put("exit")
-    # wait for process to end
-    cp.join()
-    print "core process exit"
-    # Close any openCV windows
-    #cv2.destroyAllWindows()
+    if type(gq) is multiprocessing.queues.Queue:
+        # send command to kill controller process
+        gq.put("exit")
+        # wait for process to exit
+        gp.join()
+        print "controller process exit"
+    if type(cmdq) is multiprocessing.queues.Queue:
+        # send command to kill core process
+        cmdq.put("exit")
+    if type(cp) is multiprocessing.process.Process:
+        # wait for process to end
+        cp.join()
+        print "core process exit"
+    else: 
+        # wait for process to end even indirectly
+        s = time.time()
+        while time.time()<s+5:
+            pass
+
