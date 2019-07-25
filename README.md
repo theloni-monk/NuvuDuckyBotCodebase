@@ -16,8 +16,8 @@ The controller process, The core process, and The motor process
 
 * The core process handles videostreaming and image processing. it takes images in, processes them through a pipeline function and then streams its output. At the end of the pipeline it sends commands to the motorprocess regarding how to control the motors.
 
-## To Begin: place your image processing code into the file `pipeline.py`
+## To Begin: place your image processing code into the file `pipeline.py` and the run main.py script within the parent folder
 
 The function pipline within said file must return an image, and put motor values into the motorq
 
-Codebase written by David Wang, Ian Huang, and Theo Cooper
+Codebase written by Theo Cooper, David Wang, and Ian Huang
