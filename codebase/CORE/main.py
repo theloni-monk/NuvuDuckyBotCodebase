@@ -61,7 +61,7 @@ def start(pipelineFunc):
     
     sys.exit(0) # should call correct exit func
 
-def exitFunction(mq, mp, gq = None, gp = None, cmdq=None, cp=None):
+def exitFunction(mq, mp, gq = "None", gp = "None", cmdq="None", cp="None"):
     
     mq.put("exit")
     # Wait for the motor process to end
