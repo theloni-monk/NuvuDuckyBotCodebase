@@ -39,14 +39,14 @@ def start(pipelineFunc):
         # Start the gamepadProcess
         gamepadp.start()
         # Register the exitFunction() to be called when this Python script ends.
-        atexit.register(exitFunction,[gamepadq, gamepadp, motorq, motorp])
-    else:
+        atexit.register(exitFunction,[motorq, motorp, gamepadq, gamepadp])
+    else: # bypass gamepad:
         # Create a Process for the camera, and give it the video queue.
         corep = Process(target = CORE.coreProcess, args=(pipelineFunc, motorq, cmdq))
         # Start the videoProcess
         corep.start()
         # Register the exitFunction() to be called when this Python script ends.
-        atexit.register(exitFunction,[motorq, motorp, None, None, cmdq, corep])
+        atexit.register(exitFunction,[motorq, motorp, "None", "None", cmdq, corep])
 
     
 
