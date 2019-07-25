@@ -1,4 +1,4 @@
-from CORE.rpistreaml.streamclient import Client
+from clientDependency.streamclient import Client
 import socket
 import cv2
 
