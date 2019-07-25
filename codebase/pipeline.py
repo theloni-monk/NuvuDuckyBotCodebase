@@ -7,7 +7,7 @@ import cv2
 from multiprocessing import Queue
 def pipeline(image, motorq):
 
-    imageOut = cv2.GaussianBlur(image,[3,3],0)
+    imageOut = cv2.GaussianBlur(image,(3,3),0)
 
     pass # replace with your code
 
