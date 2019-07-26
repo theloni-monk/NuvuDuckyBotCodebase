@@ -5,11 +5,11 @@ import numpy as np
 # Import library that allows parallel processing
 from multiprocessing import Process, Queue
 # Import library for streaming video
-from rpistreaml import streamserver
+import streamServerDependency.streamserver
 # Import the pipeline code
 import sys
 # Import the debug constant
-from parameters import *
+from config import *
 import socket
 
 
@@ -29,8 +29,9 @@ def retrieveImage(pipeline, cam, motorq):
 def coreProcess(pipelineFunc, motorq, cmdq):
     #THIS CODE SETS UP CAMERA THEN BEGINS VIDEOSTREAMING SERVER:
     
-    server = streamserver.Server(port=5000, promoteErrors = True, verbose = VERBOSE)
-    server.s.settimeout(5)
+    server = rpistreaml.streamserver.Server(port=5000, verbose = VERBOSE) #promoteErrors = True by defualt,
+    server.initSock()
+    server.s.settimeout(10)
     disconnected = True
 
     cam = cv2.VideoCapture(0) #TODO: use rpistream camera object
@@ -55,20 +56,26 @@ def coreProcess(pipelineFunc, motorq, cmdq):
             if not DISABLE_STREAMING:
                 if disconnected:
                     try:
+                        print "attempting connection"
                         server.serve() #blocking serve for 5s
+                        #server.s.settimeout(10) #TODO: set timeout from inside streamserver
                         print "serving successful"
                         initImg = retrieveImage(pipelineFunc, cam, motorq)
                         print "initImg retrieved"
                         server.initializeStream(initImg)
                         print "stream initialized"
                         disconnected = False
-                    except Exception as exc: #HACK: this is awful!
+                    except socket.error as exc: #HACK: this is awful!
                         print(exc)
                         disconnected = True
 
                 else:
-                    server.sendFrame(server.fetchFrame(
-                            retrieveImage, [pipelineFunc, cam, motorq]))
+                    try:
+                        server.sendFrame(server.fetchFrame(
+                                retrieveImage, [pipelineFunc, cam, motorq]))
+                    except Exception as exc:
+                        print(exc)
+                        disconnected = True
                 
             else:
                 retrieveImage(pipelineFunc, cam, motorq) # runs pipline
