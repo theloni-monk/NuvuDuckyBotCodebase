@@ -1,6 +1,8 @@
 # NuVu NuvieTown Codebase
 
-This repository contains the code necessary to start coding autonomous duckybots
+This repository contains the code necessary to start coding autonomous duckybots.
+It is essentially a boilerplate for a duckybot project such that one can completely focus on the image processing and motor handling,
+without being bogged down in image debugging woes and blocking io ineffeciencies
 
 ## Architectural Overview
 
@@ -16,7 +18,7 @@ The controller process, The core process, and The motor process
 
 * The core process handles videostreaming and image processing. it takes images in, processes them through a pipeline function and then streams its output. At the end of the pipeline it sends commands to the motorprocess regarding how to control the motors.
 
-## To Begin: place your image processing code into the file `pipeline.py` and the run main.py script within the parent folder
+## To Begin: place your image processing code into the file `pipeline.py` and the run main.py script within the myProject folder
 
 The function pipline within said file must return an image, and put motor values into the motorq
 
