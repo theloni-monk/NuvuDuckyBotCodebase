@@ -5,6 +5,8 @@ import time
 # Import library that allows parallel processing
 from multiprocessing import Process, Queue
 
+import parameters
+
 
 # recommended for auto-disabling motors on shutdown!
 def turnOffMotors():
@@ -47,19 +49,25 @@ rmotor = mh.getMotor(2)
 
 # Process the Queue of Motor Speeds
 def motorProcess(q):
-	while True:
-		msg = None
-		# Get the most recent message
-		while not q.empty():
-			msg = q.get(block=True)
-		# As long as the motor isn't None.
-		if msg is None:
-			continue
-		if msg == "exit":
-			# Quit this function if the message is None
-			# This is the indicator to stop this function
-			return
-		runMotor(lmotor,msg[0])
-		runMotor(rmotor,msg[1])
-
-
+	try:
+		while True:
+			msg = None
+			# Get the most recent message
+			while not q.empty():
+				msg = q.get(block=True)
+			# As long as the motor isn't None.
+			if msg is None:
+				continue
+			if msg == "exit":
+				# Quit this function if the message is None
+				# This is the indicator to stop this function
+				turnOffMotors()
+				return
+			runMotor(lmotor,msg[0])
+			runMotor(rmotor,msg[1])
+	except Exception as exc: #HACK
+		print "motor process closed on error"
+		if parameters.VERBOSE: 
+			print exc
+		turnOffMotors()
+		return
