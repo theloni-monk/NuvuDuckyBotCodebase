@@ -12,7 +12,7 @@ import sys
 
 class Server:
     def __init__(self, **kwargs):
-        self.promoteErrors=kwargs.get("promoteErrors", False)
+        self.promoteErrors=kwargs.get("promoteErrors", True)
         self.verbose = kwargs.get("verbose", False)
         # output file seems to be corrupted: likely due to output file stream not being closed correctly
         self.Write = kwargs.get("WriteFile", False)
@@ -30,15 +30,18 @@ class Server:
             
             self.out = cv2.VideoWriter(
                 self.writepath+self.FileName+'.avi', fourcc, self.FileFPS, self.iRes)
-            
-        print("Initilizing socket")
-        s = socket.socket()
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind((kwargs.get("bindto", ""), kwargs.get("port", 8080)))
-        s.listen(10)
-        self.s = s
+        self.port = kwargs.get("port", 8080)
+        self.bindTo = kwargs.get("bindto", "")
+        self.s = None
         atexit.register(self.close)
         print("Server ready")
+
+    def initSock(self):
+        self.log("Initilizing socket")
+        self.s = socket.socket()
+        self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.s.bind((self.bindTo,self.port))
+        self.s.listen(10)
 
     def log(self, m):
         """Prints out if verbose"""
@@ -47,6 +50,7 @@ class Server:
 
     def serve(self):
         """Find client"""
+        self.initSock() # create new socket 
         self.log("Searching for client...")
         while True:
             # wait for client to query the server for a connection
@@ -128,20 +132,20 @@ class Server:
         """Closes socket"""
         if self.Write:
             self.out.release()
-        self.s.close()
+        if self.s:
+            self.s.close()
         if(E!=None):
             if self.promoteErrors:
                 self.log("Stream encountered: " + str(E))
                 raise E 
             else:
+                self.log("Stream encountered error without being set to promote it")
                 print("Stream closed on Error\n" + str(E))
+
 
         else:
             self.log("Stream closed")
-
-        if not self.promoteErrors:
-            self.log("Stream encountered error without being set to promote it")
-            sys.exit(0)
+            return
 
 
 
@@ -154,7 +158,7 @@ def retrieveImage(cam, imgResize):
 
 # runs if you directly run this file
 if __name__ == "__main__":
-    cam = rpistream.camera.Camera(mirror=True)
+    cam = camera.Camera(mirror=True)
     resize_cof = 1  
     server = Server(port=5000)
     server.serve()
