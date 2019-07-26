@@ -2,7 +2,7 @@
 # Import the device reading library
 from evdev import InputDevice, categorize, ecodes, KeyEvent, list_devices
 import CORE
-import parameters
+import config
 import sys
 # Import library that allows parallel processing
 from multiprocessing import Process, Queue
@@ -114,9 +114,10 @@ def gamepadProcess(pipelineFunc, gamepadq, motorq, cmdq):
                     pass
     except BaseException as exc:
         print "gamepad closing on error"
-        if parameters.VERBOSE:
+        if config.VERBOSE:
             print exc
         if coreRunning:
             cmdq.put('exit')
             corep.join()
+        
         return

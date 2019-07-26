@@ -11,7 +11,7 @@ import cv2
 import sys
 import time
 import CORE
-import parameters
+import config
 
 
 ##########################################
@@ -29,7 +29,7 @@ corep = Process()
 def start(pipelineFunc):
     # Create a queue to communicate to the motor process.
     global motorp, gamepadp, corep
-    if not parameters.DISABLE_MOTORS:
+    if not config.DISABLE_MOTORS:
         # Create a Process that runs the motors, give it the queue.
         motorp = Process(target=motor.motorProcess, args=(motorq,))
         # Start the motorPorcess
@@ -37,7 +37,7 @@ def start(pipelineFunc):
         print "main process created motor process, pid = " + str(motorp.pid)
 
     # Create a queue to communicate to the gamepad process.
-    if not parameters.DISABLE_GAMEPAD:
+    if not config.DISABLE_GAMEPAD:
 
         # Create a Process for the gamepad, and give it the gamepad queue.
         gamepadp = Process(target=gamepad.gamepadProcess,
@@ -66,9 +66,14 @@ def start(pipelineFunc):
                 break
     except KeyboardInterrupt as exc:
         print "main process closing on keyboard interrupt"
-        if parameters.VERBOSE:
+        if config.VERBOSE:
             print exc
-    exitFunction()
+    try:
+        exitFunction()
+    except BaseException as exc: # catch interrupt or multiprocessing error
+        if config.VERBOSE:
+            print exc
+    
     #sys.exit(0)  # should call correct exit func
     return
 
@@ -98,9 +103,10 @@ def exitFunction():
         corep.join()
         print "core process exit"
     else:
+        print "waiting for core process exit, 3 seconds"
         # wait for process to end even indirectly
         s = time.time()
-        while time.time() < s+5:
+        while time.time() < s+3:
             pass
         print "volitile core process exit, possible orphans"
     

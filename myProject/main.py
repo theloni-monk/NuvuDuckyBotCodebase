@@ -1,7 +1,7 @@
-# in order to write parameters for the CORE module without being inside the CORE module
-# we copy our local parameters file and clone it into a parameters.py file within the CORE module, before we init the module
-coreParamFile = open("./CORE/parameters.py", "w")
-lParamFile = open("parameters.py", "r")
+# in order to write config for the CORE module without being inside the CORE module
+# we copy our local config file and clone it into a config.py file within the CORE module, before we init the module
+coreParamFile = open("./CORE/config.py", "w")
+lParamFile = open("config.py", "r")
 lines = lParamFile.readlines()
 coreParamFile.writelines(lines)
 coreParamFile.close()

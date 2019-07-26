@@ -5,7 +5,7 @@ import time
 # Import library that allows parallel processing
 from multiprocessing import Process, Queue
 
-import parameters
+import config
 
 
 # recommended for auto-disabling motors on shutdown!
@@ -67,7 +67,7 @@ def motorProcess(q):
 			runMotor(rmotor,msg[1])
 	except BaseException as exc: #HACK
 		print "motor process closed on error"
-		if parameters.VERBOSE: 
+		if config.VERBOSE: 
 			print exc
 		turnOffMotors()
 		return
