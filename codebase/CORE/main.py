@@ -65,11 +65,12 @@ def start(pipelineFunc):
             if q == 'q':
                 break
     except KeyboardInterrupt as exc:
-        print "main process closing"
+        print "main process closing on keyboard interrupt"
         if parameters.VERBOSE:
             print exc
     exitFunction()
-    sys.exit(0)  # should call correct exit func
+    #sys.exit(0)  # should call correct exit func
+    return
 
 
 def exitFunction():

@@ -65,7 +65,7 @@ def motorProcess(q):
 				return
 			runMotor(lmotor,msg[0])
 			runMotor(rmotor,msg[1])
-	except Exception as exc: #HACK
+	except BaseException as exc: #HACK
 		print "motor process closed on error"
 		if parameters.VERBOSE: 
 			print exc

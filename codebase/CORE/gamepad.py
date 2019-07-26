@@ -53,8 +53,7 @@ def gamepadProcess(pipelineFunc, gamepadq, motorq, cmdq):
                 # Quit this function if the message is None
                 # This is the indicator to stop this function
                 if coreRunning:
-                    print("DISABLING AUTONOMOUS CONTROL")
-                    # Turn the camera OFF
+                    print("Controller process exiting")
                     coreRunning = False
                     cmdq.put('exit')
                     corep.join()
@@ -113,9 +112,9 @@ def gamepadProcess(pipelineFunc, gamepadq, motorq, cmdq):
                     print('HAT_UD '+str(event.value))
                 else:
                     pass
-    except Exception as exc:
-        print "gamepad closed on error"
-        if parameters.VERBOSE: 
+    except BaseException as exc:
+        print "gamepad closing on error"
+        if parameters.VERBOSE:
             print exc
         if coreRunning:
             cmdq.put('exit')

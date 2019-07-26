@@ -72,7 +72,7 @@ def coreProcess(pipelineFunc, motorq, cmdq):
                 
             else:
                 retrieveImage(pipelineFunc, cam, motorq) # runs pipline
-    except Exception as exc:
+    except BaseException as exc:
         print "core closed on error"
         if VERBOSE: 
             print exc
