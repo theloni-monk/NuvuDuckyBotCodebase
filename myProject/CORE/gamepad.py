@@ -90,10 +90,13 @@ def gamepadProcess(pipelineFunc, gamepadq, motorq, cmdq):
             elif event.type == ecodes.EV_ABS:
                 if event.code == 0:
                     #print('PAD_LR '+str(event.value))
+                    pass
                 elif event.code == 1:
                     #print('PAD_UD '+str(event.value))
+                    pass
                 elif event.code == 2:
                     #print('TRIG_L '+str(event.value))
+                    pass
                 elif event.code == 3:
                     #print('JOY_LR '+str(event.value))
                     joyLR = event.value
@@ -105,10 +108,13 @@ def gamepadProcess(pipelineFunc, gamepadq, motorq, cmdq):
                     # Send a message to the motorProcess when the joystick moves.
                     motorq.put([joyUD+joyLR, joyUD-joyLR])
                 elif event.code == 5:
+                    pass
                     #print('TRIG_R '+str(event.value))
                 elif event.code == 16:
+                    pass
                     #print('HAT_LR '+str(event.value))
                 elif event.code == 17:
+                    pass
                     #print('HAT_UD '+str(event.value))
                 else:
                     pass

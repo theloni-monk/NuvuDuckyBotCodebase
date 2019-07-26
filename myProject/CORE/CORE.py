@@ -29,7 +29,7 @@ def retrieveImage(pipeline, cam, motorq):
 def coreProcess(pipelineFunc, motorq, cmdq):
     #THIS CODE SETS UP CAMERA THEN BEGINS VIDEOSTREAMING SERVER:
     
-    server = rpistreaml.streamserver.Server(port=5000, verbose = VERBOSE) #promoteErrors = True by defualt,
+    server = streamServerDependency.streamserver.Server(port=5000, verbose = VERBOSE) #promoteErrors = True by defualt,
     server.initSock()
     server.s.settimeout(10)
     disconnected = True
