@@ -1,5 +1,5 @@
-from CORE.rpistreaml.camera import Camera
-from CORE.rpistreaml.streamserver import Server
+from CORE.streamServerDependency.camera import Camera
+from CORE.streamServerDependency.streamserver import Server
 import cv2
 
 def retrieveImage(cam,imgResize):
