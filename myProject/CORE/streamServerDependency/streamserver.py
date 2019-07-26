@@ -112,7 +112,7 @@ class Server:
         except socket.error as e:
             self.close(e)
         
-        self.log("Sent {}KB (frame {})".format(int(len(b)/1000), self.frameno))  # debugging
+        #self.log("Sent {}KB (frame {})".format(int(len(b)/1000), self.frameno))  # debugging
         self.frameno += 1
 
     def startStream(self, getFrame, args=[]):
