@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 from CORE.streamServerDependency.camera import Camera
 from CORE.streamServerDependency.streamserver import Server
 import cv2
