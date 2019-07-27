@@ -30,12 +30,14 @@ def coreProcess(pipelineFunc, motorq, cmdq):
     #THIS CODE SETS UP CAMERA THEN BEGINS VIDEOSTREAMING SERVER:
     server = None
     disconnected = True
-    if not DISABLE_STREAMING:
+    # streaming enabled
+    if not DISABLE_STREAMING and not DISABLE_STREAMING_AND_ENABLE_WINDOW:
         server = streamServerDependency.streamserver.Server(port=5000, verbose = VERBOSE) #promoteErrors = True by defualt,
         server.initSock()
         server.s.settimeout(10)
-        disconnected = True   
-    elif ENABLE_WINDOW:
+        disconnected = True 
+    # streaming disabled and window enabled  
+    elif DISABLE_STREAMING_AND_ENABLE_WINDOW:
         cv2.namedWindow("DuckyBot Camera Feed", cv2.WINDOW_NORMAL)
 
     cam = cv2.VideoCapture(0) #TODO: use rpistream camera object
@@ -57,7 +59,8 @@ def coreProcess(pipelineFunc, motorq, cmdq):
             elif msg == 'exit':
                 return
 
-            if not DISABLE_STREAMING:
+            #PERSISTANT STREAMING CODE
+            if not DISABLE_STREAMING and DISABLE_STREAMING_AND_ENABLE_WINDOW:
                 if disconnected:
                     try:
                         print "attempting connection"
@@ -79,10 +82,12 @@ def coreProcess(pipelineFunc, motorq, cmdq):
                     except Exception as exc:
                         print(exc)
                         disconnected = True    
- 
-            elif ENABLE_WINDOW:
+
+            #VNC WINDOW CODE
+            elif DISABLE_STREAMING_AND_ENABLE_WINDOW:
                 cv2.imshow("DuckyBot Camera Feed", retrieveImage(pipelineFunc, cam, motorq)) # shows pipeline output in window to be viewed over vnc
-            
+
+            #AUTONOMOUS CODE
             else:
                 retrieveImage(pipelineFunc, cam, motorq) # runs pipline
 
@@ -92,4 +97,3 @@ def coreProcess(pipelineFunc, motorq, cmdq):
             print exc
         cam.release()
         return
-

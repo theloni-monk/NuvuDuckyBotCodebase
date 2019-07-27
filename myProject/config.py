@@ -1,8 +1,9 @@
 # this file contains useful constants for the rest of the codebase
-VERBOSE = False
+# i hope these are fairly self-explanitory
+VERBOSE = True
 DISABLE_GAMEPAD = False
 DISABLE_STREAMING = True
-ENABLE_WINDOW = True # only works if streaming disabled
+DISABLE_STREAMING_AND_ENABLE_WINDOW = True 
 DISABLE_MOTORS = False
 # Change the camera resolution, before the processes start
 CAM_WIDTH = 320
