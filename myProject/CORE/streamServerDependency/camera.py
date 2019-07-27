@@ -10,8 +10,7 @@ class Camera:
         # captures from the first webcam it sees by default
         self.cam = cv2.VideoCapture(self.deviceId)
 
-        self.trueRes = (int(self.cam.get(cv2.CAP_PROP_FRAME_WIDTH)), int(self.cam.get(
-            cv2.CAP_PROP_FRAME_HEIGHT)))  # 3, 4 = CAP_PROP_WIDTH, HEIGHT
+        self.trueRes = (int(self.cam.get(3)), int(self.cam.get(4)))  # 3, 4 = CAP_PROP_WIDTH, HEIGHT
         self.sRes = self.trueRes
 
         self.output = None
@@ -20,8 +19,8 @@ class Camera:
         """Adjust internal resize resolution"""
         self.sRes = (int(res[0]),int(res[1]))
 
-    def getFps(self):
-        return self.cam.get(cv2.CAP_PROP_FPS)  # 5 = CAP_PROP_FPS
+    #def getFps(self):
+    #    return self.cam.get(5)  # 5 = CAP_PROP_FPS
 
     @property
     def image(self):
