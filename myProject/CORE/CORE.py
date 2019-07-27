@@ -28,11 +28,15 @@ def retrieveImage(pipeline, cam, motorq):
 #COREPROCESS runs the videostream and the motor outputs through the pipeline function
 def coreProcess(pipelineFunc, motorq, cmdq):
     #THIS CODE SETS UP CAMERA THEN BEGINS VIDEOSTREAMING SERVER:
-    
-    server = streamServerDependency.streamserver.Server(port=5000, verbose = VERBOSE) #promoteErrors = True by defualt,
-    server.initSock()
-    server.s.settimeout(10)
+    server = None
     disconnected = True
+    if not DISABLE_STREAMING:
+        server = streamServerDependency.streamserver.Server(port=5000, verbose = VERBOSE) #promoteErrors = True by defualt,
+        server.initSock()
+        server.s.settimeout(10)
+        disconnected = True   
+    elif ENABLE_WINDOW:
+        cv2.namedWindow("DuckyBot Camera Feed", cv2.WINDOW_NORMAL)
 
     cam = cv2.VideoCapture(0) #TODO: use rpistream camera object
     cam.set(3, CAM_WIDTH)
@@ -68,17 +72,20 @@ def coreProcess(pipelineFunc, motorq, cmdq):
                     except socket.error as exc: #HACK: this is awful!
                         print(exc)
                         disconnected = True
-
                 else:
                     try:
                         server.sendFrame(server.fetchFrame(
                                 retrieveImage, [pipelineFunc, cam, motorq]))
                     except Exception as exc:
                         print(exc)
-                        disconnected = True
-                
+                        disconnected = True    
+ 
+            elif ENABLE_WINDOW:
+                cv2.imshow("DuckyBot Camera Feed", retrieveImage(pipelineFunc, cam, motorq)) # shows pipeline output in window to be viewed over vnc
+            
             else:
                 retrieveImage(pipelineFunc, cam, motorq) # runs pipline
+
     except BaseException as exc:
         print "core closed on error"
         if VERBOSE: 
