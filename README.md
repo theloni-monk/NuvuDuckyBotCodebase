@@ -18,7 +18,13 @@ The controller process, The core process, and The motor process
 
 * The core process handles videostreaming and image processing. it takes images in, processes them through a pipeline function and then streams its output. At the end of the pipeline it sends commands to the motorprocess regarding how to control the motors.
 
-## To Begin: place your image processing code into the file `pipeline.py` and the run main.py script within the myProject folder
+## To Begin
+
+_________________________
+
+place your image processing code into the file `pipeline.py` and the run `main.py` script within the myProject folder
+
+On your logitech G507 controller press start and once you get a message that the server is ready use the code hosted on rpistrem_videoclient to view a livestream from your duckybot
 
 The function pipline within said file must return an image, and put motor values into the motorq
 
