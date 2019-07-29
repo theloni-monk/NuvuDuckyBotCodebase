@@ -39,6 +39,7 @@ def coreProcess(pipelineFunc, motorq, cmdq):
     # streaming disabled and window enabled  
     elif DISABLE_STREAMING_AND_ENABLE_WINDOW:
         cv2.namedWindow("DuckyBot Camera Feed", cv2.WINDOW_NORMAL)
+        print "to close the window, press q or esc, but the program will not exit"
 
     cam = cv2.VideoCapture(0) #TODO: use rpistream camera object
     cam.set(3, CAM_WIDTH)
@@ -57,10 +58,11 @@ def coreProcess(pipelineFunc, motorq, cmdq):
             if msg is None:
                 pass
             elif msg == 'exit':
+                print "core process exiting cleanly"
                 return
 
             #PERSISTANT STREAMING CODE
-            if not DISABLE_STREAMING and DISABLE_STREAMING_AND_ENABLE_WINDOW:
+            if not DISABLE_STREAMING and not DISABLE_STREAMING_AND_ENABLE_WINDOW:
                 if disconnected:
                     try:
                         print "attempting connection"
@@ -86,6 +88,9 @@ def coreProcess(pipelineFunc, motorq, cmdq):
             #VNC WINDOW CODE
             elif DISABLE_STREAMING_AND_ENABLE_WINDOW:
                 cv2.imshow("DuckyBot Camera Feed", retrieveImage(pipelineFunc, cam, motorq)) # shows pipeline output in window to be viewed over vnc
+                k = cv2.waitKey(1)
+                if k == ord('q') or k == 27: # q or esc
+                    cmdq.put('exit')
 
             #AUTONOMOUS CODE
             else:

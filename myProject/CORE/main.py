@@ -59,22 +59,24 @@ def start(pipelineFunc):
         # atexit.register(exitFunction,[])
 
     # Prevent this main process from terminating until ESCAPE is pressed
+    print "to exit, type 'q' and press enter, or press command and c at the same time"
     try:
         while True:
-            q = raw_input('')
-            if q == 'q':
+            k = raw_input()
+            if k == 'q':  # q or esc
                 break
     except KeyboardInterrupt as exc:
         print "main process closing on keyboard interrupt"
         if config.VERBOSE:
             print exc
+
     try:
         exitFunction()
-    except BaseException as exc: # catch interrupt or multiprocessing error
+    except BaseException as exc:  # catch interrupt or multiprocessing error
         if config.VERBOSE:
             print exc
-    
-    #sys.exit(0)  # should call correct exit func
+
+    # sys.exit(0)  # should call correct exit func
     return
 
 
@@ -92,7 +94,7 @@ def exitFunction():
     gamepadq.put("exit")
     # wait for process to exit
     if gamepadp.is_alive():
-            gamepadp.join()
+        gamepadp.join()
     print "controller process exit"
 
     # send command to kill core process
@@ -109,5 +111,5 @@ def exitFunction():
         while time.time() < s+3:
             pass
         print "volitile core process exit, possible orphans"
-    
+
     return
