@@ -8,6 +8,7 @@ from multiprocessing import Process, Queue
 import streamServerDependency.streamserver
 # Import the pipeline code
 import sys
+import traceback
 # Import the debug constant
 from config import *
 import socket
@@ -98,7 +99,9 @@ def coreProcess(pipelineFunc, motorq, cmdq):
 
     except BaseException as exc:
         print "core closed on error"
+        excinfo = sys.exc_info()
         if VERBOSE: 
             print exc
+            traceback.print_exception(*excinfo)
         cam.release()
         return
